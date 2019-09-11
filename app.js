@@ -11,4 +11,8 @@ app.get("/", function(request, response){
 	response.render("home.hbs")
 })
 
+app.get("/about", function(request, response){
+	response.render("about.hbs")
+})
+
 app.listen(8080)
