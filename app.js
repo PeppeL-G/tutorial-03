@@ -41,4 +41,19 @@ app.get("/humans", function(request, response){
 	
 })
 
+// GET /humans/123
+app.get("/humans/:id", function(request, response){
+	
+	const id = request.params.id // 123
+	
+	const human = humans.find(h => h.id == id)
+	
+	const model = {
+		human
+	}
+	
+	response.render("human.hbs", model)
+	
+})
+
 app.listen(8080)
