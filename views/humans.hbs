@@ -1,0 +1,10 @@
+<h1>All humans</h1>
+{{#if humans.length}}
+	<ul>
+		{{#each humans}}
+			<li>{{name}}</li>
+		{{/each}}
+	</ul>
+{{else}}
+	<p>There are no humans :(</p>
+{{/if}}
