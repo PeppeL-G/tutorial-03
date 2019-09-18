@@ -1,8 +1,6 @@
 <h1>Human</h1>
 {{#if human}}
-	<div>Id: {{human.id}}</div>
-	<div>Name: {{human.name}}</div>
-	<div>Age: {{human.age}}</div>
+	<p>{{human.name}} is {{human.age}} years old and have id {{human.id}}.</p>
 {{else}}
 	<p>No human with that id.</p>
 {{/if}}

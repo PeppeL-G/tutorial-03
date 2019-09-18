@@ -9,16 +9,27 @@
 	</ul>
 {{/if}}
 
-<form action="" method="POST">
+
+<form class="form-horizontal col-10" action="" method="POST">
 	
-	<div>
-		Name: <input type="text" name="name">
+	<div class="form-group">
+		<div class="col-3 col-sm-12">
+			<label class="form-label" for="input-name">Name</label>
+		</div>
+		<div class="col-9 col-sm-12">
+			<input name="name" class="form-input" type="text" id="input-name" placeholder="Name">
+		</div>
 	</div>
 	
-	<div>
-		Age: <input type="number" name="age">
+	<div class="form-group">
+		<div class="col-3 col-sm-12">
+			<label class="form-label" for="input-age">Age</label>
+		</div>
+		<div class="col-9 col-sm-12">
+			<input name="age" class="form-input" type="number" id="input-age" placeholder="Age">
+		</div>
 	</div>
 	
-	<input type="submit" value="Create Human">
+	<input type="submit" value="Create Human" class="btn btn-primary">
 	
 </form>

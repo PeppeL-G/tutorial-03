@@ -7,28 +7,49 @@
 	<title>My Website</title>
 	<link rel="stylesheet" href="/layout.css">
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+	<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+	<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
 </head>
 <body>
 	
-	<header>
-		The header
-	</header>
-	
-	<nav>
-		<ul>
-			<li><a href="/">Home</a></li>
-			<li><a href="/humans">All humans</a></li>
-			<li><a href="/create-human">Create human</a></li>
-		</ul>
-	</nav>
-	
-	<main>
-		{{{body}}}
-	</main>
-	
-	<footer>
-		<a href="/about">About</a>
-	</footer>
+	<div class="off-canvas off-canvas-sidebar-show">
+		
+		<!-- off-screen toggle button -->
+		<a class="off-canvas-toggle btn btn-primary btn-action" href="#sidebar-id">
+			<i class="icon icon-menu"></i>
+		</a>
+		
+		<div id="sidebar-id" class="off-canvas-sidebar">
+			<!-- off-screen sidebar -->
+			
+			<ul class="nav">
+				<li class="nav-item">
+					<a href="/about">About</a>
+				</li>
+			</ul>
+			
+		</div>
+		
+		<a class="off-canvas-overlay" href="#close"></a>
+		
+		<div class="off-canvas-content">
+			<!-- off-screen content -->
+			
+			<header class="navbar">
+				<section class="navbar-section">
+					<a href="/" class="navbar-brand mr-2">Home</a>
+					<a href="/humans" class="btn btn-link">View Humans</a>
+					<a href="/create-human" class="btn btn-link">Create Human</a>
+				</section>
+			</header>
+			
+			<main>
+				{{{body}}}
+			</main>
+			
+		</div>
+	</div>
 	
 </body>
 </html>
