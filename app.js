@@ -2,20 +2,7 @@ const express = require('express')
 const expressHandlebars = require('express-handlebars')
 const bodyParser = require('body-parser')
 
-// TODO: Structure the code better by putting this in a separate JS file.
-const humans = [{
-	id: 1,
-	name: "Alice",
-	age: 10
-}, {
-	id: 2,
-	name: "Bob",
-	age: 15
-}, {
-	id: 3,
-	name: "Claire",
-	age: 20
-}]
+const db = require('./db')
 
 const app = express()
 
@@ -42,11 +29,28 @@ app.get("/about", function(request, response){
 // GET /humans
 app.get("/humans", function(request, response){
 	
-	const model = {
-		humans
-	}
-	
-	response.render("humans.hbs", model)
+	db.getAllHumans(function(error, humans){
+		
+		if(error){
+			
+			const model = {
+				somethingWentWrong: true
+			}
+			
+			response.render("humans.hbs", model)
+			
+		}else{
+			
+			const model = {
+				somethingWentWrong: false,
+				humans
+			}
+			
+			response.render("humans.hbs", model)
+			
+		}
+		
+	})
 	
 })
 
@@ -55,13 +59,20 @@ app.get("/humans/:id", function(request, response){
 	
 	const id = request.params.id // 123
 	
-	const human = humans.find(h => h.id == id)
-	
-	const model = {
-		human
-	}
-	
-	response.render("human.hbs", model)
+	db.getHumanById(id, function(error, human){
+		
+		if(error){
+			
+		}else{
+			
+			const model = {
+				human
+			}
+			
+			response.render("human.hbs", model)
+			
+		}
+	})
 	
 })
 
@@ -95,20 +106,20 @@ app.post("/create-human", function(request, response){
 	
 	if(validationErrors.length == 0){
 		
-		const human = {
-			id: humans.length + 1, // TODO: Id will be re-used if the newest human is deleted (that's bad).
-			name,
-			age
-		}
-		
-		humans.push(human)
-		
-		response.redirect("/humans/"+human.id)
+		db.createHuman(name, age, function(error, id){
+			if(error){
+				
+			}else{
+				response.redirect("/humans/"+id)
+			}
+		})
 		
 	}else{
 		
 		const model = {
-			validationErrors
+			validationErrors,
+			name,
+			age
 		}
 		
 		response.render("create-human.hbs", model)
