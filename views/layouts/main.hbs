@@ -27,6 +27,20 @@
 				<li class="nav-item">
 					<a href="/about">About</a>
 				</li>
+				{{#if isLoggedIn}}
+					<li class="nav-item">
+						Is logged in!
+					</li>
+				{{else}}
+					<li class="nav-item">
+						<a href="/login">Login</a>
+					</li>
+				{{/if}}
+				{{#if previouslyViewedHuman}}
+					<li class="nav-item">
+						<a href="/humans/{{previouslyViewedHuman.id}}">Previously viewed human ({{previouslyViewedHuman.name}})</a>
+					</li>
+				{{/if}}
 			</ul>
 			
 		</div>
@@ -40,7 +54,7 @@
 				<section class="navbar-section">
 					<a href="/" class="navbar-brand mr-2">Home</a>
 					<a href="/humans" class="btn btn-link">View Humans</a>
-					<a href="/create-human" class="btn btn-link">Create Human</a>
+					<a href="/humans/create" class="btn btn-link">Create Human</a>
 				</section>
 			</header>
 			

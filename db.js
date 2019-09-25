@@ -10,6 +10,18 @@ db.run(`
 	)
 `)
 
+// If you have relations in your database,
+// be sure to use foreign key constraints as below!
+db.run(`
+	CREATE TABLE IF NOT EXISTS comments (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		name TEXT,
+		comments TEXT,
+		humanId INTEGER,
+		FOREIGN KEY humanId REFERENCES humans(id)
+	)
+`)
+
 exports.getAllHumans = function(callback){
 	
 	const query = "SELECT * FROM humans"

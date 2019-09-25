@@ -1,8 +1,15 @@
 const express = require('express')
 const expressHandlebars = require('express-handlebars')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
+const expressSession = require('express-session')
+const SQLiteStore = require('connect-sqlite3')(expressSession)
+const humansRouter = require('./humansRouters')
 
 const db = require('./db')
+
+const username = "Alice"
+const password = "abc123"
 
 const app = express()
 
@@ -11,6 +18,41 @@ app.use(express.static("public"))
 app.use(bodyParser.urlencoded({
 	extended: false
 }))
+
+app.use(cookieParser())
+
+app.use(expressSession({
+	secret: "lksjdlkjdslkfdsjslkdfj",
+	saveUninitialized: false,
+	resave: false,
+	store: new SQLiteStore()
+}))
+
+// Fetch the previous human the client viewed.
+app.use(function(request, response, next){
+	
+	const previouslyViewedHumanId = request.cookies.previouslyViewedHumanId
+	
+	db.getHumanById(previouslyViewedHumanId, function(error, human){
+		
+		response.locals.previouslyViewedHuman = human
+		
+		next()
+		
+	})
+	
+})
+
+// Add info about if the user is logged in or not.
+app.use(function(request, response, next){
+	
+	response.locals.isLoggedIn = request.session.isLoggedIn
+	
+	next()
+	
+})
+
+app.use("/humans", humansRouter)
 
 app.engine("hbs", expressHandlebars({
 	defaultLayout: "main.hbs"
@@ -26,106 +68,43 @@ app.get("/about", function(request, response){
 	response.render("about.hbs")
 })
 
-// GET /humans
-app.get("/humans", function(request, response){
-	
-	db.getAllHumans(function(error, humans){
-		
-		if(error){
-			
-			const model = {
-				somethingWentWrong: true
-			}
-			
-			response.render("humans.hbs", model)
-			
-		}else{
-			
-			const model = {
-				somethingWentWrong: false,
-				humans
-			}
-			
-			response.render("humans.hbs", model)
-			
-		}
-		
-	})
-	
+// GET /login
+app.get("/login", function(request, response){
+	response.render("login.hbs")
 })
 
-// GET /humans/123
-app.get("/humans/:id", function(request, response){
+// POST /login
+// Body: username=alice&password=abc123
+app.post("/login", function(request, response){
 	
-	const id = request.params.id // 123
-	
-	db.getHumanById(id, function(error, human){
-		
-		if(error){
-			
-		}else{
-			
-			const model = {
-				human
-			}
-			
-			response.render("human.hbs", model)
-			
-		}
-	})
-	
-})
-
-// GET /create-human
-app.get("/create-human", function(request, response){
-	const model = {
-		validationErrors: []
+	if(request.body.username == username && request.body.password == password){
+		request.session.isLoggedIn = true
+		response.redirect("/")
+	}else{
+		response.render("login.hbs")
 	}
-	response.render("create-human.hbs", model)
+	
 })
 
-
-// POST /create-human
-// Body: name=Alice&age=10
-app.post("/create-human", function(request, response){
+// POST /comments
+// Body: name=alice&message=Nice!&humanId=12
+app.post("/comments", function(request, response){
 	
 	const name = request.body.name
-	const age = request.body.age // TODO: You probably want to convert this into integer.
+	const message = request.body.message
+	const humanId = request.body.humanId
 	
-	const validationErrors = []
+	// When creating a resource with a relation...
+	const query = "INSERT INTO comments (name, message, humanId) VALUES (?, ?, ?)"
+	const values = [name, message, humanId]
 	
-	if(name == ""){
-		validationErrors.push("Must enter a name.")
-	}
+	db.run(query, values, function(error){
+		
+		// ...handle foreign key violation errors here!
+		// (you can use error.message to figure out type of error)
+		
+	})
 	
-	if(age == ""){
-		validationErrors.push("Must enter an age.")
-	}
-	
-	// TODO: you probably want to use other validation rules (min/max length on username, min/max values on age).
-	
-	if(validationErrors.length == 0){
-		
-		db.createHuman(name, age, function(error, id){
-			if(error){
-				
-			}else{
-				response.redirect("/humans/"+id)
-			}
-		})
-		
-	}else{
-		
-		const model = {
-			validationErrors,
-			name,
-			age
-		}
-		
-		response.render("create-human.hbs", model)
-		
-	}
-		
 })
 
 app.listen(8080)
